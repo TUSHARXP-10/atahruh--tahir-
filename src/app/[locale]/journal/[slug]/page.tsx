@@ -6,13 +6,14 @@ import { getFormatter, getTranslations, setRequestLocale } from "next-intl/serve
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { ShareArticle } from "@/components/journal/share";
-import { JsonLd } from "@/components/seo/json-ld";
+import { JsonLd, ORG_ID } from "@/components/seo/json-ld";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
 import { Link } from "@/i18n/navigation";
 import { site } from "@/lib/site";
 import { getJournalPost, getJournalPosts } from "@/server/queries/content";
+import { absoluteUrl, metaDescription, pageMetadata } from "@/lib/seo";
 
 export async function generateStaticParams() {
   const posts = await getJournalPosts("en");
@@ -23,13 +24,14 @@ export async function generateMetadata({ params }: PageProps<"/[locale]/journal/
   const { locale, slug } = await params;
   const post = await getJournalPost(slug, locale);
   if (!post) return {};
-  const path = `${locale === "en" ? "" : `/${locale}`}/journal/${slug}`;
-  return {
+  return pageMetadata({
+    locale,
+    path: `/journal/${slug}`,
     title: post.title,
-    description: post.excerpt,
-    alternates: { canonical: path },
-    openGraph: { type: "article", title: post.title, description: post.excerpt, publishedTime: post.publishedAt, images: [{ url: post.coverUrl }] },
-  };
+    description: metaDescription(post.excerpt),
+    images: [{ url: post.coverUrl, alt: post.title }],
+    article: { publishedTime: post.publishedAt, modifiedTime: post.updatedAt, tags: post.tags },
+  });
 }
 
 export default async function ArticlePage({ params }: PageProps<"/[locale]/journal/[slug]">) {
@@ -47,13 +49,17 @@ export default async function ArticlePage({ params }: PageProps<"/[locale]/journ
       <JsonLd
         data={{
           "@context": "https://schema.org",
-          "@type": "Article",
+          "@type": "BlogPosting",
           headline: post.title,
           description: post.excerpt,
-          image: new URL(post.coverUrl, site.url).toString(),
+          image: absoluteUrl(post.coverUrl),
           datePublished: post.publishedAt,
-          author: { "@type": "Organization", name: post.author },
-          publisher: { "@type": "Organization", name: site.name },
+          dateModified: post.updatedAt,
+          inLanguage: englishBody ? "en" : locale,
+          keywords: post.tags.join(", "),
+          timeRequired: `PT${post.readMinutes}M`,
+          author: { "@type": "Organization", name: post.author, url: site.url },
+          publisher: { "@id": ORG_ID, "@type": "Organization", name: site.name, logo: { "@type": "ImageObject", url: absoluteUrl("/brand/logo-on-light.png") } },
           mainEntityOfPage: url,
         }}
       />

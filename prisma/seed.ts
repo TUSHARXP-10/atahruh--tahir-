@@ -164,8 +164,6 @@ async function seedProducts(noteIds: Map<string, string>) {
         isSampleable: p.sampleable ?? (p.kind === "FRAGRANCE"),
         useBottleArt: !PRODUCT_PHOTOS[p.slug],
         position: index,
-        seoTitle: `${p.name} — ${p.tagline}`,
-        seoDescription: p.story.slice(0, 155),
       },
     });
     ids.set(p.slug, product.id);

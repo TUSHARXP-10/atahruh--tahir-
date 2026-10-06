@@ -25,9 +25,17 @@ import {
   type StatsBlock,
   type InspirationBlock,
 } from "@/server/queries/content";
-import { OrganizationJsonLd } from "@/components/seo/json-ld";
+import type { Metadata } from "next";
+import { SiteJsonLd } from "@/components/seo/json-ld";
+import { pageMetadata } from "@/lib/seo";
 
 export const revalidate = 300;
+
+export async function generateMetadata({ params }: PageProps<"/[locale]">): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "meta" });
+  return pageMetadata({ locale, path: "/", title: t("title"), description: t("description"), absoluteTitle: true });
+}
 
 export default async function HomePage({ params }: PageProps<"/[locale]">) {
   const { locale } = await params;
@@ -61,7 +69,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
 
   return (
     <>
-      <OrganizationJsonLd />
+      <SiteJsonLd locale={locale} settings={settings} />
       {hero ? <Hero data={hero} /> : null}
       <CategoryOrbs collections={collections} title={t("categories.title")} />
       <DualBanners />

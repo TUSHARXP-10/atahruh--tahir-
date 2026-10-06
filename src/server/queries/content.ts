@@ -91,6 +91,7 @@ function localizePost(p: Awaited<ReturnType<typeof getPostRows>>[number], locale
     tags: p.tags,
     readMinutes: p.readMinutes,
     publishedAt: new Date(p.publishedAt).toISOString(),
+    updatedAt: new Date(p.updatedAt).toISOString(),
   };
 }
 

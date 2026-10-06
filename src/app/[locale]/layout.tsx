@@ -31,15 +31,20 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: LayoutProps<"/[locale]">): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "meta" });
+  // No canonical here: pages set their own (src/lib/seo.ts) — an inherited one would
+  // point every page that forgot at the home page
+  const google = process.env.GOOGLE_SITE_VERIFICATION;
+  const bing = process.env.BING_SITE_VERIFICATION;
   return {
     metadataBase: new URL(site.url),
     title: { default: t("title"), template: `%s · ${locale === "ar" ? site.nameAr : site.name}` },
     description: t("description"),
     applicationName: site.name,
-    alternates: {
-      canonical: locale === "en" ? "/" : `/${locale}`,
-      languages: { en: "/", ar: "/ar", "x-default": "/" },
-    },
+    keywords: t("keywords"),
+    authors: [{ name: site.name, url: site.url }],
+    creator: site.name,
+    publisher: site.name,
+    category: "shopping",
     openGraph: {
       type: "website",
       siteName: site.name,
@@ -50,6 +55,8 @@ export async function generateMetadata({ params }: LayoutProps<"/[locale]">): Pr
     },
     twitter: { card: "summary_large_image" },
     formatDetection: { telephone: false },
+    robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 } },
+    ...(google || bing ? { verification: { ...(google ? { google } : {}), ...(bing ? { other: { "msvalidate.01": bing } } : {}) } } : {}),
   };
 }
 

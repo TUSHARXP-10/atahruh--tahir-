@@ -11,11 +11,12 @@ import { photo } from "@/lib/images";
 import { fillTokens } from "@/lib/tokens";
 import { slugify } from "@/lib/utils";
 import { getContent, getSettings, type FaqBlock } from "@/server/queries/content";
+import { pageMetadata } from "@/lib/seo";
 
 export async function generateMetadata({ params }: PageProps<"/[locale]/faq">): Promise<Metadata> {
   const { locale } = await params;
   const faq = await getContent<FaqBlock>("faq", locale);
-  return { title: faq?.title ?? "FAQ", description: faq?.intro, alternates: { canonical: locale === "en" ? "/faq" : `/${locale}/faq` } };
+  return pageMetadata({ locale, path: "/faq", title: faq?.title ?? "FAQ", description: faq?.intro });
 }
 
 export default async function FaqPage({ params }: PageProps<"/[locale]/faq">) {

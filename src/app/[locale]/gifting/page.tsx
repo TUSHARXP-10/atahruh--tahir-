@@ -14,11 +14,12 @@ import { photo } from "@/lib/images";
 import { formatPrice } from "@/lib/money";
 import { getAllCards, sortCards } from "@/server/queries/catalog";
 import { getSettings } from "@/server/queries/content";
+import { pageMetadata } from "@/lib/seo";
 
 export async function generateMetadata({ params }: PageProps<"/[locale]/gifting">): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "giftingPage" });
-  return { title: t("title"), description: t("metaDescription"), alternates: { canonical: locale === "en" ? "/gifting" : `/${locale}/gifting` } };
+  return pageMetadata({ locale, path: "/gifting", title: t("title"), description: t("metaDescription") });
 }
 
 export default async function GiftingPage({ params }: PageProps<"/[locale]/gifting">) {

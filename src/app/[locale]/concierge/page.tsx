@@ -5,11 +5,12 @@ import { ConciergeChat } from "@/components/concierge/concierge-chat";
 import { GoldDust } from "@/components/motion/gold-dust";
 import { Container } from "@/components/ui/container";
 import { getSettings } from "@/server/queries/content";
+import { pageMetadata } from "@/lib/seo";
 
 export async function generateMetadata({ params }: PageProps<"/[locale]/concierge">): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "concierge" });
-  return { title: t("title"), description: t("subtitle"), alternates: { canonical: locale === "en" ? "/concierge" : `/${locale}/concierge` } };
+  return pageMetadata({ locale, path: "/concierge", title: t("title"), description: t("subtitle") });
 }
 
 export default async function ConciergePage({ params }: PageProps<"/[locale]/concierge">) {

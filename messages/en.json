@@ -1,9 +1,16 @@
 {
   "meta": {
-    "title": "Aayat al-Ruh — Fine Perfumes, Pure Attars & Natural Therapies",
-    "description": "A house of fine perfumes, pure attars and natural therapies — crafted in small batches to elevate your mind, body and everyday rituals.",
+    "title": "Aayat al-Ruh — Luxury Perfumes & Pure Attars Online in India",
+    "description": "Shop fine perfumes, pure alcohol-free attars and natural therapy oils from Aayat al-Ruh, Mumbai. Small-batch, long-lasting scents with cash on delivery across India.",
     "collectionDescription": "Shop {name} at Aayat al-Ruh — {lead}fine perfumes, pure attars and natural therapies made in small batches, delivered across India with cash on delivery.",
-    "policyDescription": "{intro} The full {title} for shopping at Aayat al-Ruh, India."
+    "policyDescription": "{intro} The full {title} for shopping at Aayat al-Ruh, India.",
+    "keywords": "attar, attars online, buy attar online India, alcohol-free attar, oud attar, Arabic attar, luxury perfume India, perfume for men, perfume for women, long-lasting perfume, aromatherapy oils, natural therapy oils, perfume gift set, Aayat al-Ruh",
+    "productDescription": "{name} — {tagline}. Buy online at Aayat al-Ruh in {forms}, from {price}. Small-batch, long-lasting, delivered across India with cash on delivery.",
+    "productTitle": "{name} — {tagline}",
+    "productFormPerfume": "perfume",
+    "productFormAttar": "alcohol-free attar",
+    "productFormOil": "oil",
+    "productFormSet": "gift set"
   },
   "common": {
     "brand": "Aayat al-Ruh",

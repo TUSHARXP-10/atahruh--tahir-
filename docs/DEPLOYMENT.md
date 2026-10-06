@@ -89,7 +89,7 @@ Set these in **Vercel → Project → Settings → Environment Variables** (or i
 1. **Vercel → Settings → Domains**: add `aayatalruh.com` and `www.aayatalruh.com`, then create the DNS records Vercel shows at your registrar. HTTPS is automatic.
 2. Redeploy (Vercel → Deployments → ⋯ → Redeploy) so the site picks up the new domain automatically.
 
-Search engines are blocked automatically until the site runs on an `https://` domain; after that `robots.txt` allows them and `/sitemap.xml` lists every page in both languages. Submit the sitemap in [Google Search Console](https://search.google.com/search-console).
+Search engines are blocked automatically until the site runs on an `https://` domain; after that `robots.txt` allows them and `/sitemap.xml` lists every page in both languages. Then follow **[SEO.md](SEO.md)** to register the site with Google and Bing and get it ranking.
 
 ## 6. Switch on Paytm payments
 
