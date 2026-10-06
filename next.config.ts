@@ -37,6 +37,12 @@ const nextConfig: NextConfig = {
     // WebP only: AVIF encodes are slow and can stall on some photo sizes; every current browser supports WebP
     formats: ["image/webp"],
     qualities: [60, 75, 80, 90],
+    // Fewer widths and a long cache keep image transformations well inside Vercel's free
+    // allowance (each re-optimisation counts). Photos never change in place — a new upload
+    // gets a new address — so caching for a month is safe.
+    deviceSizes: [640, 828, 1200, 1920, 2048],
+    imageSizes: [64, 128, 256, 384],
+    minimumCacheTTL: 2_678_400, // 31 days
     remotePatterns: [
       { protocol: "https", hostname: "images.unsplash.com" },
       { protocol: "https", hostname: "res.cloudinary.com" },

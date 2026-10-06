@@ -11,8 +11,8 @@ Allow about half a day, plus Paytm’s own approval time.
 | Account | Why | Notes |
 |---|---|---|
 | A domain (e.g. `aayatalruh.com`) | The website address | Any registrar |
-| [Vercel](https://vercel.com) | Runs the website | Connect the Git repository |
-| [Supabase](https://supabase.com) | PostgreSQL database | Region **South Asia (Mumbai)**. Use the **Pro** plan for the live shop — free projects pause when idle and have no backups |
+| [Vercel](https://vercel.com) | Runs the website | Connect the Git repository. The free Hobby plan works technically, but Vercel's terms reserve it for non-commercial sites — move to Pro once the shop is earning (see *Running on free plans*) |
+| [Supabase](https://supabase.com) | PostgreSQL database | Region **South Asia (Mumbai)**. The free plan works — see *Running on free plans* for how its limits are covered |
 | **Paytm for Business** | Online payments | Needs business KYC and **Payment Gateway** enabled for a website |
 | [Resend](https://resend.com) | Order and sign-in emails | Verify the domain with DNS records |
 | Anthropic API key *(optional)* | AI Scent Concierge | [console.anthropic.com](https://console.anthropic.com) |
@@ -131,6 +131,18 @@ Open **Admin → Launch checklist**. It checks payments, email, domain, logo, co
 
 ---
 
+## Running on free plans
+
+The shop can run at no monthly cost on Vercel Hobby + Supabase Free. What each plan lacks, and how the site covers it:
+
+| Limit | How it's handled |
+|---|---|
+| Supabase Free **pauses a project after 7 days without activity** | A Vercel cron job (in `vercel.json`) calls `/api/health` every day, which runs a tiny database query. Nothing to set up |
+| Supabase Free has **no backups** | The *Weekly database backup* GitHub workflow saves an encrypted copy every Sunday, kept 90 days. Turn it on: GitHub → repository → **Settings → Secrets and variables → Actions → New repository secret**, add `DIRECT_URL` (the Session pooler string) and `BACKUP_PASSPHRASE` (a long passphrase — store it safely, it's needed to restore). Run it once from the **Actions** tab to check |
+| Supabase Free: **500 MB** database | Product photos uploaded in Admin are stored in the database (about 0.2–0.4 MB each), so this fits roughly a thousand photos plus all orders. Supabase → **Reports** shows the size |
+| Vercel Hobby: **5,000 image optimisations / month** | Optimised images are cached for 31 days and only a few sizes are generated (`next.config.ts`), which keeps a small shop well inside the limit. If it is ever exceeded, new image sizes stop loading until the month resets |
+| Vercel Hobby: **non-commercial use only** (Vercel's terms) | Fine for building and testing. Once real orders come in, upgrade the project to **Vercel Pro** — nothing in the code changes |
+
 ## Updating the site later
 
 - **Code changes**: push to the main branch — Vercel builds and deploys. If the change includes a new migration in `prisma/migrations`, run `pnpm db:deploy` with the production `DIRECT_URL` first (new tables should enable row-level security, as in the `row_level_security` migration).
@@ -139,7 +151,16 @@ Open **Admin → Launch checklist**. It checks payments, email, domain, logo, co
 
 ## Backups
 
-On the Supabase Pro plan, daily backups are kept automatically (**Database → Backups**); the Point-in-Time Recovery add-on lets you restore any moment. Uploaded photos live in the same database, so one backup covers everything. Order and customer CSVs can be exported from Admin → Orders and Admin → Customers.
+**Free plan:** the *Weekly database backup* workflow (see *Running on free plans*). To restore one: download the `database-backup` artifact from the workflow run in GitHub → **Actions**, unzip it, then:
+
+```bash
+gpg --decrypt aayat-al-ruh-YYYY-MM-DD.dump.gpg > backup.dump        # asks for BACKUP_PASSPHRASE
+pg_restore --clean --if-exists --no-owner --dbname "$DIRECT_URL" backup.dump
+```
+
+(`gpg` and `pg_restore` come with Git for Windows and the PostgreSQL client tools respectively.) Restore into a fresh Supabase project if you can, and point `DATABASE_URL` at it.
+
+**Supabase Pro plan:** daily backups are kept automatically (**Database → Backups**); the Point-in-Time Recovery add-on lets you restore any moment. Uploaded photos live in the same database, so one backup covers everything. Order and customer CSVs can be exported from Admin → Orders and Admin → Customers.
 
 ## Troubleshooting
 
