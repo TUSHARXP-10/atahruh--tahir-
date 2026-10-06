@@ -8,11 +8,12 @@ import { db } from "@/lib/db";
 import { photo } from "@/lib/images";
 import { getAllCards, sortCards } from "@/server/queries/catalog";
 import { getSettings } from "@/server/queries/content";
+import { pageMetadata } from "@/lib/seo";
 
 export async function generateMetadata({ params }: PageProps<"/[locale]/discovery-set">): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "discovery" });
-  return { title: t("metaTitle"), description: t("metaDescription"), alternates: { canonical: locale === "en" ? "/discovery-set" : `/${locale}/discovery-set` } };
+  return pageMetadata({ locale, path: "/discovery-set", title: t("metaTitle"), description: t("metaDescription") });
 }
 
 export default async function DiscoverySetPage({ params, searchParams }: PageProps<"/[locale]/discovery-set">) {

@@ -8,11 +8,12 @@ import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
 import { photo } from "@/lib/images";
 import { getSettings } from "@/server/queries/content";
+import { pageMetadata } from "@/lib/seo";
 
 export async function generateMetadata({ params }: PageProps<"/[locale]/contact">): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "contact" });
-  return { title: t("metaTitle"), description: t("intro"), alternates: { canonical: locale === "en" ? "/contact" : `/${locale}/contact` } };
+  return pageMetadata({ locale, path: "/contact", title: t("metaTitle"), description: t("intro") });
 }
 
 export default async function ContactPage({ params }: PageProps<"/[locale]/contact">) {

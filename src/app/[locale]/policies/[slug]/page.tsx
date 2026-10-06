@@ -9,6 +9,7 @@ import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
 import { fillTokens } from "@/lib/tokens";
 import { getPolicy, getSettings, POLICY_SLUGS, type PolicySlug } from "@/server/queries/content";
+import { metaDescription, pageMetadata } from "@/lib/seo";
 
 const isPolicy = (s: string): s is PolicySlug => (POLICY_SLUGS as readonly string[]).includes(s);
 
@@ -21,10 +22,13 @@ export async function generateMetadata({ params }: PageProps<"/[locale]/policies
   if (!isPolicy(slug)) return {};
   const [policy, t] = await Promise.all([getPolicy(slug, locale), getTranslations({ locale, namespace: "meta" })]);
   const intro = policy?.intro ?? "";
-  return {
-    title: policy?.title,
-    description: intro.length >= 70 || !policy ? intro : t("policyDescription", { intro, title: policy.title.toLowerCase() }),
-    alternates: { canonical: `${locale === "en" ? "" : `/${locale}`}/policies/${slug}` } };
+  if (!policy) return {};
+  return pageMetadata({
+    locale,
+    path: `/policies/${slug}`,
+    title: policy.title,
+    description: intro.length >= 70 ? metaDescription(intro) : t("policyDescription", { intro, title: policy.title.toLowerCase() }),
+  });
 }
 
 export default async function PolicyPage({ params }: PageProps<"/[locale]/policies/[slug]">) {

@@ -7,26 +7,35 @@ import { ProductExperience } from "@/components/product/product-experience";
 import { getSettings } from "@/server/queries/content";
 import { getSessionUser } from "@/server/session";
 import { ProductRail, RecentlyViewed } from "@/components/product/product-rail";
-import { JsonLd } from "@/components/seo/json-ld";
+import { ProductJsonLd } from "@/components/seo/json-ld";
 import { Container } from "@/components/ui/container";
-import { site } from "@/lib/site";
+import { formatPrice } from "@/lib/money";
+import { metaDescription, pageMetadata } from "@/lib/seo";
 import type { FormType } from "@/lib/types";
 import { getAllCards, getProductDetail, getProductReviews, sortCards } from "@/server/queries/catalog";
 
 export async function generateMetadata({ params }: PageProps<"/[locale]/products/[slug]">): Promise<Metadata> {
   const { locale, slug } = await params;
-  const p = await getProductDetail(slug, locale);
+  const [p, t] = await Promise.all([getProductDetail(slug, locale), getTranslations({ locale, namespace: "meta" })]);
   if (!p) return {};
-  const image = p.formDetails[0]?.images[0]?.url;
-  return {
-    title: `${p.name} — ${p.tagline}`,
-    description: p.story.slice(0, 160),
-    alternates: {
-      canonical: `${locale === "ar" ? "/ar" : ""}/products/${slug}`,
-      languages: { en: `/products/${slug}`, ar: `/ar/products/${slug}` },
-    },
-    openGraph: { type: "website", title: p.name, description: p.tagline, images: [`/og/product/${slug}?locale=${locale}`, ...(image ? [image] : [])] },
-  };
+  const image = p.formDetails[0]?.images[0];
+  const formLabel = { PERFUME: t("productFormPerfume"), ATTAR: t("productFormAttar"), OIL: t("productFormOil"), SET: t("productFormSet") };
+  const forms = new Intl.ListFormat(locale, { type: "disjunction" }).format(p.forms.map((f) => formLabel[f.type]));
+  const tagline = p.tagline.replace(/[.。]$/, "");
+  // The SEO title and description from Admin → Products are written in English. An older
+  // seed copied the first 155 characters of the story there; those cut-offs are ignored.
+  const own = locale === "en";
+  const seoDescription = p.seoDescription && !(p.story.startsWith(p.seoDescription) && p.story.length > p.seoDescription.length) ? p.seoDescription : null;
+  return pageMetadata({
+    locale,
+    path: `/products/${slug}`,
+    title: (own && p.seoTitle?.replace(/[.。]$/, "")) || t("productTitle", { name: p.name, tagline }),
+    description: (own && seoDescription) || metaDescription(t("productDescription", { name: p.name, tagline, forms, price: formatPrice(p.minPrice, locale) }), 200),
+    images: [
+      { url: `/og/product/${slug}?locale=${locale}`, width: 1200, height: 630, alt: p.name },
+      ...(image ? [{ url: image.url, alt: image.alt }] : []),
+    ],
+  });
 }
 
 export default async function ProductPage({ params, searchParams }: PageProps<"/[locale]/products/[slug]">) {
@@ -47,33 +56,10 @@ export default async function ProductPage({ params, searchParams }: PageProps<"/
   ).slice(0, 10);
 
   const primaryCollection = product.collections.find((c) => ["perfumes", "attars", "therapies", "gift-sets"].includes(c.slug)) ?? product.collections[0];
-  const offers = product.forms.flatMap((f) => f.variants);
 
   return (
     <ProductFormProvider initialForm={initialForm} defaultForm={defaultForm}>
-      <JsonLd
-        data={{
-          "@context": "https://schema.org",
-          "@type": "Product",
-          name: product.name,
-          description: product.story,
-          brand: { "@type": "Brand", name: site.name },
-          sku: offers[0]?.id,
-          category: product.family ?? product.kind,
-          image: product.formDetails.flatMap((f) => f.images.map((i) => i.url)).slice(0, 4),
-          ...(product.rating.count
-            ? { aggregateRating: { "@type": "AggregateRating", ratingValue: product.rating.avg, reviewCount: product.rating.count } }
-            : {}),
-          offers: {
-            "@type": "AggregateOffer",
-            priceCurrency: "INR",
-            lowPrice: Math.min(...offers.map((v) => v.price)) / 100,
-            highPrice: Math.max(...offers.map((v) => v.price)) / 100,
-            offerCount: offers.length,
-            availability: offers.some((v) => v.stock > 0) ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
-          },
-        }}
-      />
+      <ProductJsonLd product={product} locale={locale} reviews={reviews} settings={settings} />
       <Container className="pb-16 pt-8 lg:pb-24 lg:pt-12">
         <ProductExperience
           product={product}

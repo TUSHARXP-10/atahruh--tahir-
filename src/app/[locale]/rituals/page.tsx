@@ -13,11 +13,12 @@ import { photo } from "@/lib/images";
 import { cn } from "@/lib/utils";
 import { getAllCards } from "@/server/queries/catalog";
 import { getContent, type RitualsBlock } from "@/server/queries/content";
+import { pageMetadata } from "@/lib/seo";
 
 export async function generateMetadata({ params }: PageProps<"/[locale]/rituals">): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "ritualsPage" });
-  return { title: t("title"), description: t("metaDescription"), alternates: { canonical: locale === "en" ? "/rituals" : `/${locale}/rituals` } };
+  return pageMetadata({ locale, path: "/rituals", title: t("title"), description: t("metaDescription") });
 }
 
 export default async function RitualsPage({ params }: PageProps<"/[locale]/rituals">) {

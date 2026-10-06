@@ -1,9 +1,11 @@
 import { ChevronRight } from "lucide-react";
+import { useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { site } from "@/lib/site";
+import { absoluteUrl, localePath } from "@/lib/seo";
 import { JsonLd } from "@/components/seo/json-ld";
 
 export function Breadcrumbs({ items }: { items: { label: string; href?: string }[] }) {
+  const locale = useLocale();
   return (
     <nav aria-label="Breadcrumb">
       <JsonLd
@@ -14,7 +16,7 @@ export function Breadcrumbs({ items }: { items: { label: string; href?: string }
             "@type": "ListItem",
             position: i + 1,
             name: item.label,
-            ...(item.href ? { item: new URL(item.href, site.url).toString() } : {}),
+            ...(item.href ? { item: absoluteUrl(localePath(locale, item.href)) } : {}),
           })),
         }}
       />

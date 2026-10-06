@@ -5,11 +5,12 @@ import { GoldDust } from "@/components/motion/gold-dust";
 import { QuizFlow } from "@/components/quiz/quiz-flow";
 import { Container } from "@/components/ui/container";
 import { photo } from "@/lib/images";
+import { pageMetadata } from "@/lib/seo";
 
 export async function generateMetadata({ params }: PageProps<"/[locale]/fragrance-quiz">): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "quiz" });
-  return { title: t("metaTitle"), description: t("intro"), alternates: { canonical: locale === "en" ? "/fragrance-quiz" : `/${locale}/fragrance-quiz` } };
+  return pageMetadata({ locale, path: "/fragrance-quiz", title: t("metaTitle"), description: t("intro") });
 }
 
 export default async function QuizPage({ params }: PageProps<"/[locale]/fragrance-quiz">) {

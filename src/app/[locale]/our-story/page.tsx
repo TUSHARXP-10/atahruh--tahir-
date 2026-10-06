@@ -12,11 +12,12 @@ import { SectionHeading } from "@/components/ui/section-heading";
 import { Link } from "@/i18n/navigation";
 import { photo } from "@/lib/images";
 import { getContent, type InspirationBlock, type StatsBlock } from "@/server/queries/content";
+import { pageMetadata } from "@/lib/seo";
 
 export async function generateMetadata({ params }: PageProps<"/[locale]/our-story">): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "storyPage" });
-  return { title: t("metaTitle"), description: t("metaDescription"), alternates: { canonical: locale === "en" ? "/our-story" : `/${locale}/our-story` } };
+  return pageMetadata({ locale, path: "/our-story", title: t("metaTitle"), description: t("metaDescription") });
 }
 
 const CRAFTS = [

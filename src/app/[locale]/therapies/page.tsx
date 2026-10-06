@@ -8,6 +8,7 @@ import { Section } from "@/components/ui/section";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { photo } from "@/lib/images";
 import { getAllCards, sortCards } from "@/server/queries/catalog";
+import { pageMetadata } from "@/lib/seo";
 
 const NEEDS = ["STRESS", "SLEEP", "FOCUS", "SKIN_HAIR", "BALANCE"] as const;
 const HOW = [
@@ -20,7 +21,7 @@ const HOW = [
 export async function generateMetadata({ params }: PageProps<"/[locale]/therapies">): Promise<Metadata> {
   const { locale } = await params;
   const [t, tNav] = await Promise.all([getTranslations({ locale, namespace: "therapiesPage" }), getTranslations({ locale, namespace: "nav" })]);
-  return { title: tNav("therapies"), description: t("metaDescription"), alternates: { canonical: locale === "en" ? "/therapies" : `/${locale}/therapies` } };
+  return pageMetadata({ locale, path: "/therapies", title: tNav("therapies"), description: t("metaDescription") });
 }
 
 export default async function TherapiesPage({ params }: PageProps<"/[locale]/therapies">) {

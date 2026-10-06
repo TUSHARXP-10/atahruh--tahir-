@@ -9,11 +9,12 @@ import { Link } from "@/i18n/navigation";
 import { photo } from "@/lib/images";
 import { cn } from "@/lib/utils";
 import { getJournalPosts } from "@/server/queries/content";
+import { pageMetadata } from "@/lib/seo";
 
 export async function generateMetadata({ params }: PageProps<"/[locale]/journal">): Promise<Metadata> {
   const { locale } = await params;
   const [t, tNav] = await Promise.all([getTranslations({ locale, namespace: "journalPage" }), getTranslations({ locale, namespace: "nav" })]);
-  return { title: tNav("journal"), description: t("metaDescription"), alternates: { canonical: locale === "en" ? "/journal" : `/${locale}/journal` } };
+  return pageMetadata({ locale, path: "/journal", title: tNav("journal"), description: t("metaDescription") });
 }
 
 export default async function JournalPage({ params, searchParams }: PageProps<"/[locale]/journal">) {

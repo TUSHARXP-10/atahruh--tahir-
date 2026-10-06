@@ -4,11 +4,12 @@ import { TrackOrderForm } from "@/components/account/track-order-form";
 import { Ornament } from "@/components/brand/ornament";
 import { GirihPattern } from "@/components/brand/patterns";
 import { Container } from "@/components/ui/container";
+import { pageMetadata } from "@/lib/seo";
 
 export async function generateMetadata({ params }: PageProps<"/[locale]/track-order">): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "orders" });
-  return { title: t("trackTitle") };
+  return pageMetadata({ locale, path: "/track-order", title: t("trackTitle"), description: t("trackText") });
 }
 
 export default async function TrackOrderPage({ params, searchParams }: PageProps<"/[locale]/track-order">) {
