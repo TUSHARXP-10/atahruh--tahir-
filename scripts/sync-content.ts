@@ -7,8 +7,9 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient, type Prisma } from "../src/generated/prisma/client";
 import { CONTENT_BLOCKS } from "../prisma/seed-data/content";
 import { PAGE_BLOCKS } from "../prisma/seed-data/pages";
+import { pgConnection } from "../src/lib/pg-connection";
 
-const db = new PrismaClient({ adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL! }) });
+const db = new PrismaClient({ adapter: new PrismaPg(pgConnection(process.env.DATABASE_URL!)) });
 
 async function main() {
   const blocks = { ...CONTENT_BLOCKS, ...PAGE_BLOCKS } as Record<string, { data: unknown; dataAr?: unknown }>;

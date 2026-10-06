@@ -20,7 +20,7 @@ To put the site live, follow **[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)**.
 
 ## Tech
 
-Next.js 16 (App Router, React 19, Turbopack) · TypeScript · Tailwind CSS v4 · Prisma 7 + PostgreSQL · Better Auth · next-intl · Paytm Payment Gateway · Resend (email) · Anthropic SDK (Claude Opus 5) · sharp · Vitest + Playwright.
+Next.js 16 (App Router, React 19, Turbopack) · TypeScript · Tailwind CSS v4 · Prisma 7 + PostgreSQL (Supabase in production) · Better Auth · next-intl · Paytm Payment Gateway · Resend (email) · Anthropic SDK (Claude Opus 5) · sharp · Vitest + Playwright.
 
 ## Run it locally
 

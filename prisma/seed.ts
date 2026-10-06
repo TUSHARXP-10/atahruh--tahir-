@@ -10,6 +10,7 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import { hashPassword } from "better-auth/crypto";
 import { PrismaClient, type Prisma } from "../src/generated/prisma/client";
 import { photo, type PhotoKey } from "../src/lib/images";
+import { pgConnection } from "../src/lib/pg-connection";
 import { commerceDefaults, site } from "../src/lib/site";
 import { COLLECTIONS, CONTENT_BLOCKS, COUPONS, JOURNAL, REVIEW_POOL, TESTIMONIALS } from "./seed-data/content";
 import { NOTES } from "./seed-data/notes";
@@ -18,7 +19,7 @@ import { PRODUCT_PHOTOS } from "./seed-data/product-photos";
 import { PRODUCTS, type SeedProduct } from "./seed-data/products";
 
 const db = new PrismaClient({
-  adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL! }),
+  adapter: new PrismaPg(pgConnection(process.env.DATABASE_URL!)),
 });
 
 const rs = (rupees: number) => rupees * 100;

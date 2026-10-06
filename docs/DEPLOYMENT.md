@@ -1,6 +1,6 @@
 # Putting Aayat al-Ruh live
 
-This guide takes the site from this repository to a live domain with real payments. It assumes **Vercel** for hosting and **Neon** for the database (both have free starting tiers and Indian regions); any Node.js 20 host with PostgreSQL works the same way.
+This guide takes the site from this repository to a live domain with real payments. It assumes **Vercel** for hosting and **Supabase** for the PostgreSQL database (both have Indian regions); any Node.js 20 host with PostgreSQL works the same way.
 
 Allow about half a day, plus Paytm’s own approval time.
 
@@ -12,7 +12,7 @@ Allow about half a day, plus Paytm’s own approval time.
 |---|---|---|
 | A domain (e.g. `aayatalruh.com`) | The website address | Any registrar |
 | [Vercel](https://vercel.com) | Runs the website | Connect the Git repository |
-| [Neon](https://neon.tech) | PostgreSQL database | Choose region **AWS Asia Pacific (Mumbai)** |
+| [Supabase](https://supabase.com) | PostgreSQL database | Region **South Asia (Mumbai)**. Use the **Pro** plan for the live shop — free projects pause when idle and have no backups |
 | **Paytm for Business** | Online payments | Needs business KYC and **Payment Gateway** enabled for a website |
 | [Resend](https://resend.com) | Order and sign-in emails | Verify the domain with DNS records |
 | Anthropic API key *(optional)* | AI Scent Concierge | [console.anthropic.com](https://console.anthropic.com) |
@@ -22,15 +22,24 @@ Allow about half a day, plus Paytm’s own approval time.
 
 ## 2. Create the database
 
-1. In Neon, create a project in the Mumbai region.
-2. Copy the **pooled** connection string — it looks like `postgresql://user:password@ep-…-pooler.ap-south-1.aws.neon.tech/neondb?sslmode=require`.
-3. From your computer, apply the database structure and load the catalogue **once**:
+1. In Supabase, create a **New project** in region **South Asia (Mumbai)** and save the database password it asks for.
+2. Click **Connect** (top of the project) and copy two connection strings, replacing `[YOUR-PASSWORD]` with the database password (if the password contains symbols such as `@ # / ?`, URL-encode them — e.g. `@` → `%40` — or choose a letters-and-digits password):
 
-Point your terminal at the Neon database, and choose the first admin login (use a long, unique password):
+   | Supabase name | Port | Used as | Looks like |
+   |---|---|---|---|
+   | **Transaction pooler** | 6543 | `DATABASE_URL` — the website | `postgresql://postgres.abcd…:PASSWORD@aws-0-ap-south-1.pooler.supabase.com:6543/postgres` |
+   | **Session pooler** | 5432 | `DIRECT_URL` — creating tables and the seed | same host, port `5432` |
+
+3. **Close Supabase's Data API** — the site talks to the database directly and never uses it: **Project Settings → Data API** → turn off *Enable Data API* (or remove `public` from *Exposed schemas*). The migrations also switch on row-level security for every table, so the API could not read or change anything even if it were left on.
+4. *Optional, stricter encryption:* **Project Settings → Database → SSL Configuration → Download certificate**, and put the file’s contents into `DATABASE_CA_CERT`. Without it the connection is still encrypted; with it the server’s certificate is verified too.
+5. From your computer, apply the database structure and load the catalogue **once**.
+
+Point your terminal at the Supabase database, and choose the first admin login (use a long, unique password):
 
 ```bash
 # PowerShell                                         # bash / macOS
-$env:DATABASE_URL="postgresql://…"                   export DATABASE_URL="postgresql://…"
+$env:DATABASE_URL="postgresql://…:6543/postgres"     export DATABASE_URL="postgresql://…:6543/postgres"
+$env:DIRECT_URL="postgresql://…:5432/postgres"       export DIRECT_URL="postgresql://…:5432/postgres"
 $env:SEED_ADMIN_EMAIL="you@yourdomain.com"           export SEED_ADMIN_EMAIL="you@yourdomain.com"
 $env:SEED_ADMIN_PASSWORD="a-long-unique-password"    export SEED_ADMIN_PASSWORD="a-long-unique-password"
 ```
@@ -52,7 +61,8 @@ Set these in **Vercel → Project → Settings → Environment Variables** (Prod
 
 | Variable | Value |
 |---|---|
-| `DATABASE_URL` | Neon pooled connection string |
+| `DATABASE_URL` | Supabase **Transaction pooler** string (port 6543) |
+| `DATABASE_CA_CERT` | Optional — Supabase SSL certificate contents (step 2.4) |
 | `NEXT_PUBLIC_SITE_URL` | `https://aayatalruh.com` (your domain, no trailing slash) |
 | `BETTER_AUTH_URL` | Same as above |
 | `BETTER_AUTH_SECRET` | Random secret: `openssl rand -base64 32` |
@@ -64,7 +74,7 @@ Set these in **Vercel → Project → Settings → Environment Variables** (Prod
 | `NEXT_PUBLIC_GA_ID` | Optional — Google Analytics 4 measurement ID (`G-…`) |
 | `NEXT_PUBLIC_META_PIXEL_ID` | Optional — Meta Pixel ID (digits) for Instagram/Facebook ads |
 
-Leave `SHADOW_DATABASE_URL`, `DATABASE_POOL_MAX`, `NEXT_BUILD_CPUS` and `DEMO_CONTENT` unset in production.
+`DIRECT_URL` is only needed on your computer for `pnpm db:deploy`; Vercel doesn’t need it. Leave `SHADOW_DATABASE_URL`, `DATABASE_POOL_MAX`, `NEXT_BUILD_CPUS` and `DEMO_CONTENT` unset in production.
 
 ---
 
@@ -123,13 +133,13 @@ Open **Admin → Launch checklist**. It checks payments, email, domain, logo, co
 
 ## Updating the site later
 
-- **Code changes**: push to the main branch — Vercel builds and deploys. If the change includes a new migration in `prisma/migrations`, run `pnpm db:deploy` against the production `DATABASE_URL` first.
+- **Code changes**: push to the main branch — Vercel builds and deploys. If the change includes a new migration in `prisma/migrations`, run `pnpm db:deploy` with the production `DIRECT_URL` first (new tables should enable row-level security, as in the `row_level_security` migration).
 - **New content blocks** shipped by a code change: `pnpm db:content` adds them without touching anything the client edited.
 - **Everything else** (products, prices, stock, photos, coupons, pages, homepage) is done in `/admin` and appears on the site immediately.
 
 ## Backups
 
-Neon keeps point-in-time history (restore any moment within your plan’s window from the Neon console). Uploaded photos live in the same database, so one backup covers everything. Order and customer CSVs can be exported from Admin → Orders and Admin → Customers.
+On the Supabase Pro plan, daily backups are kept automatically (**Database → Backups**); the Point-in-Time Recovery add-on lets you restore any moment. Uploaded photos live in the same database, so one backup covers everything. Order and customer CSVs can be exported from Admin → Orders and Admin → Customers.
 
 ## Troubleshooting
 
@@ -141,3 +151,5 @@ Neon keeps point-in-time history (restore any moment within your plan’s window
 | Can’t sign in after moving domains | `BETTER_AUTH_URL` and `NEXT_PUBLIC_SITE_URL` must be the exact live URL |
 | Concierge button missing | `ANTHROPIC_API_KEY` set, then redeployed |
 | Admin edits don’t show | They should be instant; hard-refresh the page. Settings changes can take up to a minute on cached pages |
+| Database errors after deploy | `DATABASE_URL` must be the **Transaction pooler** (port 6543) string with the real password; `pnpm db:deploy` needs `DIRECT_URL` (Session pooler, port 5432) |
+| “password authentication failed” | Re-check the database password and URL-encode symbols in it; the user name is `postgres.<project-ref>` |
