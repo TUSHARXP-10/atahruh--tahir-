@@ -1,4 +1,16 @@
 /**
+ * The site's public address. NEXT_PUBLIC_SITE_URL wins when set; on Vercel it can be
+ * left out — Vercel provides the production address itself (the vercel.app address,
+ * or the custom domain once one is connected).
+ */
+function siteUrl() {
+  const explicit = process.env.NEXT_PUBLIC_SITE_URL;
+  if (explicit) return explicit.replace(/\/$/, "");
+  const vercel = process.env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL || process.env.VERCEL_PROJECT_PRODUCTION_URL;
+  return vercel ? `https://${vercel}` : "http://localhost:3000";
+}
+
+/**
  * Brand constants. Anything the client may change day-to-day (WhatsApp number,
  * shipping thresholds, social links) is also editable in Admin → Settings, which
  * overrides these defaults at runtime.
@@ -11,7 +23,7 @@ export const site = {
   tagline: "Scents · Attars · Therapies · Rituals",
   description:
     "Aayat al-Ruh is a house of fine perfumes, pure attars and natural therapies — crafted in small batches to elevate your mind, body and everyday rituals.",
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
+  url: siteUrl(),
 
   // Placeholders until the client confirms — editable in Admin → Settings
   contact: {

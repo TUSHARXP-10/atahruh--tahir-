@@ -3,7 +3,10 @@ import createNextIntlPlugin from "next-intl/plugin";
 
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "";
+// Same rule as src/lib/site.ts: an explicit address, else the production address Vercel provides
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : "");
 /** A real HTTPS deployment (not localhost): turns on HSTS and the HTTP → HTTPS redirect. */
 const httpsSite = siteUrl.startsWith("https://") && !/localhost|127\.0\.0\.1/.test(siteUrl);
 

@@ -5,6 +5,7 @@ import { nextCookies } from "better-auth/next-js";
 import { emailOTP } from "better-auth/plugins";
 import { db } from "./db";
 import { emailLayout, sendEmail } from "./email";
+import { site } from "./site";
 
 const googleEnabled = !!(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET);
 
@@ -16,7 +17,7 @@ const OTP_SUBJECT: Record<string, string> = {
 };
 
 export const auth = betterAuth({
-  baseURL: process.env.BETTER_AUTH_URL ?? process.env.NEXT_PUBLIC_SITE_URL,
+  baseURL: process.env.BETTER_AUTH_URL || site.url,
   secret: process.env.BETTER_AUTH_SECRET,
   database: prismaAdapter(db, { provider: "postgresql" }),
   emailAndPassword: {

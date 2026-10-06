@@ -57,14 +57,14 @@ The seed creates the catalogue, collections, journal, FAQ and policies, coupons 
 
 ## 3. Environment variables
 
-Set these in **Vercel → Project → Settings → Environment Variables** (Production). They are read when the site builds, so redeploy after changing them.
+Set these in **Vercel → Project → Settings → Environment Variables** (or in the *Environment Variables* section of the import screen). They are read when the site builds, so redeploy after changing them. **Only `DATABASE_URL` and `BETTER_AUTH_SECRET` are required** to go live; the rest switch on optional features.
 
 | Variable | Value |
 |---|---|
 | `DATABASE_URL` | Supabase **Transaction pooler** string (port 6543) |
 | `DATABASE_CA_CERT` | Optional — Supabase SSL certificate contents (step 2.4) |
-| `NEXT_PUBLIC_SITE_URL` | `https://aayatalruh.com` (your domain, no trailing slash) |
-| `BETTER_AUTH_URL` | Same as above |
+| `NEXT_PUBLIC_SITE_URL` | Optional on Vercel — the site uses Vercel's own production address (the `.vercel.app` address, or your domain once connected). Set it only to force a different address |
+| `BETTER_AUTH_URL` | Optional — defaults to the site address |
 | `BETTER_AUTH_SECRET` | Random secret: `openssl rand -base64 32` |
 | `PAYTM_MID` · `PAYTM_MERCHANT_KEY` | From Paytm (step 6) |
 | `PAYTM_ENV` | `staging` while testing, then `production` |
@@ -87,7 +87,7 @@ Set these in **Vercel → Project → Settings → Environment Variables** (Prod
 ## 5. Connect the domain
 
 1. **Vercel → Settings → Domains**: add `aayatalruh.com` and `www.aayatalruh.com`, then create the DNS records Vercel shows at your registrar. HTTPS is automatic.
-2. Make sure `NEXT_PUBLIC_SITE_URL` and `BETTER_AUTH_URL` match the final domain, and redeploy.
+2. Redeploy (Vercel → Deployments → ⋯ → Redeploy) so the site picks up the new domain automatically.
 
 Search engines are blocked automatically until the site runs on an `https://` domain; after that `robots.txt` allows them and `/sitemap.xml` lists every page in both languages. Submit the sitemap in [Google Search Console](https://search.google.com/search-console).
 
