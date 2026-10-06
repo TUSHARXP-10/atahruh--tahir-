@@ -1,0 +1,444 @@
+@import "tailwindcss";
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Aayat al-Ruh — "Noir & Gold, Verses of the Soul"
+   ───────────────────────────────────────────────────────────────────────────── */
+
+@custom-variant rtl (&:where([dir="rtl"], [dir="rtl"] *));
+@custom-variant ltr (&:where([dir="ltr"], [dir="ltr"] *));
+
+@theme {
+  /* Palette */
+  --color-noir: #0b0907;
+  --color-ebony: #15100c;
+  --color-umber: #2a1f16;
+  --color-bronze: #3d2e20;
+  --color-gold: #c9a55c;
+  --color-gold-light: #e8cd92;
+  --color-gold-pale: #f3e3bd;
+  --color-gold-deep: #8e6b2f;
+  --color-ivory: #f4ecdd;
+  --color-sand: #e7d9c0;
+  --color-parchment: #faf5ec;
+  --color-smoke: #b8ad9b;
+  --color-mist: #8a7f70;
+  --color-ink: #1c1510;
+  --color-ruby: #9e2b38;
+  --color-emerald: #2f6b55;
+  --color-cream: #fbf7ef;
+  --color-cream-deep: #f2e9d9;
+  --color-ink-muted: #6b5d4d;
+
+  /* Type */
+  --font-display: var(--font-cormorant), var(--font-amiri), ui-serif, Georgia, serif;
+  --font-caps: var(--font-cinzel), var(--font-amiri), ui-serif, serif;
+  --font-sans: var(--font-manrope), var(--font-plex-arabic), ui-sans-serif, system-ui, sans-serif;
+  --font-arabic: var(--font-amiri), serif;
+  --font-script: var(--font-pinyon), "Snell Roundhand", cursive;
+
+  --text-display-xl: clamp(3.25rem, 7.5vw, 7.5rem);
+  --text-display-xl--line-height: 0.95;
+  --text-display-lg: clamp(2.5rem, 5vw, 4.75rem);
+  --text-display-lg--line-height: 1;
+  --text-display-md: clamp(2rem, 3.6vw, 3.25rem);
+  --text-display-md--line-height: 1.05;
+
+  /* Motion */
+  --ease-luxe: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-silk: cubic-bezier(0.65, 0, 0.35, 1);
+
+  --animate-shimmer: shimmer 6s linear infinite;
+  --animate-float: float 7s ease-in-out infinite;
+  --animate-spin-slow: spin 40s linear infinite;
+  --animate-marquee: marquee 40s linear infinite;
+  --animate-glow: glow 4s ease-in-out infinite;
+  --animate-fade-up: fade-up 0.9s var(--ease-luxe) both;
+
+  @keyframes shimmer {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 200% 50%; }
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+  }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+  @keyframes glow {
+    0%, 100% { opacity: 0.55; }
+    50% { opacity: 1; }
+  }
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+}
+
+/* Section tones — components read these, so the same markup works on
+   noir (default) and on the ivory "light" bands used by the design. */
+@theme inline {
+  --color-fg: var(--tone-fg);
+  --color-fg-muted: var(--tone-fg-muted);
+  --color-heading: var(--tone-heading);
+  --color-accent: var(--tone-accent);
+  --color-hairline: var(--tone-hairline);
+  --color-surface: var(--tone-surface);
+  --color-btn: var(--tone-btn);
+  --color-btn-fg: var(--tone-btn-fg);
+}
+
+:root,
+[data-tone="dark"] {
+  --tone-fg: #f4ecdd;
+  --tone-fg-muted: #b8ad9b;
+  --tone-heading: #f4ecdd;
+  --tone-accent: #c9a55c;
+  --tone-hairline: rgb(201 165 92 / 0.16);
+  --tone-surface: #15100c;
+  --tone-btn: #c9a55c;
+  --tone-btn-fg: #1c1510;
+}
+
+[data-tone="light"] {
+  --tone-fg: #1c1510;
+  --tone-fg-muted: #6b5d4d;
+  --tone-heading: #1c1510;
+  --tone-accent: #8e6b2f;
+  --tone-hairline: #e6d9c2;
+  --tone-surface: #ffffff;
+  --tone-btn: #1c1510;
+  --tone-btn-fg: #f3e3bd;
+}
+
+/* Arabic: swap the type system */
+:root:lang(ar) {
+  --font-display: var(--font-amiri), serif;
+  --font-caps: var(--font-amiri), serif;
+  --font-sans: var(--font-plex-arabic), var(--font-manrope), sans-serif;
+}
+
+/* ─── Base ─────────────────────────────────────────────────────────────────── */
+
+@layer base {
+  html {
+    color-scheme: dark;
+    -webkit-tap-highlight-color: transparent;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    background-color: var(--color-noir);
+    color: var(--color-ivory);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  ::selection {
+    background: color-mix(in oklab, var(--color-gold) 45%, transparent);
+    color: var(--color-parchment);
+  }
+
+  :focus-visible {
+    outline: 1.5px solid var(--color-gold-light);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: -0.01em;
+  }
+
+  :lang(ar) h1, :lang(ar) h2, :lang(ar) h3, :lang(ar) h4 {
+    letter-spacing: 0;
+    line-height: 1.35;
+  }
+
+  img { user-select: none; }
+
+  /* Scrollbar */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-bronze) transparent;
+  }
+}
+
+/* Direction-aware overlay motion */
+:root { --dir: 1; }
+[dir="rtl"] { --dir: -1; }
+@keyframes sheet-in-end { from { transform: translateX(calc(100% * var(--dir))); } to { transform: translateX(0); } }
+@keyframes sheet-out-end { from { transform: translateX(0); } to { transform: translateX(calc(100% * var(--dir))); } }
+@keyframes sheet-in-start { from { transform: translateX(calc(-100% * var(--dir))); } to { transform: translateX(0); } }
+@keyframes sheet-out-start { from { transform: translateX(0); } to { transform: translateX(calc(-100% * var(--dir))); } }
+@keyframes sheet-in-bottom { from { transform: translateY(100%); } to { transform: translateY(0); } }
+@keyframes sheet-out-bottom { from { transform: translateY(0); } to { transform: translateY(100%); } }
+@keyframes sheet-in-top { from { transform: translateY(-100%); } to { transform: translateY(0); } }
+@keyframes sheet-out-top { from { transform: translateY(0); } to { transform: translateY(-100%); } }
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fade-out { from { opacity: 1; } to { opacity: 0; } }
+@keyframes scroll-cue { 0% { transform: translateY(-100%); } 100% { transform: translateY(220%); } }
+@keyframes modal-in { from { opacity: 0; scale: 0.97; } to { opacity: 1; scale: 1; } }
+
+/* Hero product scene melts into the architecture behind it */
+.hero-scene-mask {
+  -webkit-mask-image: radial-gradient(ellipse 62% 72% at 60% 46%, #000 42%, transparent 80%);
+  mask-image: radial-gradient(ellipse 62% 72% at 60% 46%, #000 42%, transparent 80%);
+}
+[dir="rtl"] .hero-scene-mask {
+  -webkit-mask-image: radial-gradient(ellipse 62% 72% at 40% 46%, #000 42%, transparent 80%);
+  mask-image: radial-gradient(ellipse 62% 72% at 40% 46%, #000 42%, transparent 80%);
+}
+/* Portrait fades into the dark band on every side */
+.portrait-mask {
+  -webkit-mask-image: radial-gradient(ellipse 50% 52% at 50% 46%, #000 55%, transparent 100%);
+  mask-image: radial-gradient(ellipse 50% 52% at 50% 46%, #000 55%, transparent 100%);
+}
+/* Soft edge for side images that bleed off a band */
+.fade-start {
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 38%);
+  mask-image: linear-gradient(to right, transparent, #000 38%);
+}
+[dir="rtl"] .fade-start {
+  -webkit-mask-image: linear-gradient(to left, transparent, #000 38%);
+  mask-image: linear-gradient(to left, transparent, #000 38%);
+}
+
+/* Lenis smooth scroll */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: hidden; }
+
+/* ─── Brand utilities ──────────────────────────────────────────────────────── */
+
+@utility text-gold {
+  background-image: linear-gradient(
+    100deg,
+    var(--color-gold-deep) 0%,
+    var(--color-gold) 22%,
+    var(--color-gold-pale) 45%,
+    var(--color-gold) 62%,
+    var(--color-gold-deep) 85%,
+    var(--color-gold) 100%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@utility text-gold-animated {
+  background-image: linear-gradient(
+    100deg,
+    var(--color-gold-deep) 0%,
+    var(--color-gold) 22%,
+    var(--color-gold-pale) 45%,
+    var(--color-gold) 62%,
+    var(--color-gold-deep) 85%,
+    var(--color-gold) 100%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: var(--animate-shimmer);
+}
+
+@utility bg-gold-metal {
+  background-image: linear-gradient(
+    135deg,
+    var(--color-gold-deep),
+    var(--color-gold) 35%,
+    var(--color-gold-pale) 50%,
+    var(--color-gold) 65%,
+    var(--color-gold-deep)
+  );
+}
+
+@utility eyebrow {
+  font-family: var(--font-caps);
+  font-size: 0.72rem;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--tone-accent);
+}
+
+/* Rounded (Roman) arch */
+@utility arch {
+  border-top-left-radius: 9999px;
+  border-top-right-radius: 9999px;
+  overflow: hidden;
+}
+
+/* Pointed (Islamic) arch — designed for portrait aspect ratios */
+@utility arch-pointed {
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 140' preserveAspectRatio='none'%3E%3Cpath d='M0 140V52C0 26 22 10 50 0c28 10 50 26 50 52v88z'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 140' preserveAspectRatio='none'%3E%3Cpath d='M0 140V52C0 26 22 10 50 0c28 10 50 26 50 52v88z'/%3E%3C/svg%3E");
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+
+/* Film grain overlay — apply to a positioned element */
+@utility grain {
+  position: relative;
+  isolation: isolate;
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.07;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+}
+
+/* Hairline gold rule with a diamond centre */
+@utility rule-gold {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--color-gold) 30%, var(--color-gold) 70%, transparent);
+  opacity: 0.45;
+}
+
+/* Frosted noir glass */
+@utility glass {
+  background: color-mix(in oklab, var(--color-noir) 72%, transparent);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  backdrop-filter: blur(18px) saturate(140%);
+}
+
+@utility glass-light {
+  background: color-mix(in oklab, var(--color-ebony) 55%, transparent);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+}
+
+/* Fine gold border made with a gradient (works on rounded corners) */
+@utility border-gold-gradient {
+  border: 1px solid transparent;
+  background:
+    linear-gradient(var(--color-ebony), var(--color-ebony)) padding-box,
+    linear-gradient(140deg, color-mix(in oklab, var(--color-gold) 70%, transparent), color-mix(in oklab, var(--color-gold) 8%, transparent) 40%, color-mix(in oklab, var(--color-gold) 8%, transparent) 60%, color-mix(in oklab, var(--color-gold) 60%, transparent)) border-box;
+}
+
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+}
+
+/* Vignette used behind imagery */
+@utility vignette {
+  background: radial-gradient(ellipse at center, transparent 35%, color-mix(in oklab, var(--color-noir) 85%, transparent) 100%);
+}
+
+/* Reduced motion: keep the luxury, lose the movement */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ─── Long-form article text (journal, policies) — follows the section tone ─── */
+.prose-aar {
+  color: var(--tone-fg);
+  font-size: 1.02rem;
+  line-height: 1.8;
+}
+.prose-aar > * + * { margin-top: 1.1em; }
+.prose-aar h2,
+.prose-aar h3 {
+  font-family: var(--font-display);
+  color: var(--tone-heading);
+  line-height: 1.15;
+  margin-top: 1.8em;
+}
+.prose-aar h2 { font-size: 2rem; }
+.prose-aar h3 { font-size: 1.5rem; }
+.prose-aar h2 + *,
+.prose-aar h3 + * { margin-top: 0.5em; }
+.prose-aar a { color: var(--tone-accent); text-decoration: underline; text-underline-offset: 4px; }
+.prose-aar strong { color: var(--tone-heading); font-weight: 600; }
+.prose-aar ul,
+.prose-aar ol { padding-inline-start: 1.4em; }
+.prose-aar ul { list-style: disc; }
+.prose-aar ol { list-style: decimal; }
+.prose-aar li + li { margin-top: 0.35em; }
+.prose-aar li::marker { color: var(--tone-accent); }
+.prose-aar blockquote {
+  border-inline-start: 2px solid var(--tone-accent);
+  padding-inline-start: 1.2em;
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-style: italic;
+  color: var(--tone-heading);
+}
+.prose-aar hr { border: 0; border-top: 1px solid var(--tone-hairline); margin: 2.2em 0; }
+.prose-aar table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+.prose-aar th,
+.prose-aar td { border-bottom: 1px solid var(--tone-hairline); padding: 0.6em 0.8em; text-align: start; }
+.prose-aar th { color: var(--tone-heading); font-weight: 600; }
+.prose-aar img { border-radius: 0.5rem; }
+
+/* ─── First-visit intro veil (pure CSS: it always lifts, with or without JS) ─── */
+.intro-veil {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  background: var(--color-noir);
+  animation: intro-out 0.9s cubic-bezier(0.65, 0, 0.35, 1) 2.1s forwards;
+}
+.intro-seen .intro-veil { display: none; }
+@media (prefers-reduced-motion: reduce) {
+  .intro-veil { display: none; }
+}
+.intro-mark { animation: intro-mark 1.4s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.intro-word { animation: intro-word 1.2s cubic-bezier(0.22, 1, 0.36, 1) 0.55s both; }
+@keyframes intro-out { to { opacity: 0; visibility: hidden; } }
+@keyframes intro-mark {
+  from { opacity: 0; transform: scale(0.9); filter: blur(6px); }
+  to { opacity: 1; transform: none; filter: none; }
+}
+@keyframes intro-word {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ─── Hero entrance: CSS, so the hero shows as soon as the page arrives (no waiting for JavaScript) ─── */
+.hero-rise { animation: hero-rise 1.1s cubic-bezier(0.22, 1, 0.36, 1) var(--delay, 0s) both; }
+.hero-word { display: inline-block; animation: hero-word 1.1s cubic-bezier(0.22, 1, 0.36, 1) var(--delay, 0s) both; }
+.hero-scene { animation: hero-scene 1.8s cubic-bezier(0.22, 1, 0.36, 1) both; }
+/* First visit: play as the intro veil lifts */
+html:not(.intro-seen) .hero-rise,
+html:not(.intro-seen) .hero-word { animation-delay: calc(var(--delay, 0s) + 2s); }
+html:not(.intro-seen) .hero-scene { animation-delay: 1.9s; }
+@keyframes hero-rise { from { opacity: 0; transform: translateY(14px); } }
+@keyframes hero-word { from { opacity: 0; transform: translateY(110%); } }
+/* The product scene starts partly visible so it counts as painted straight away */
+@keyframes hero-scene { from { opacity: 0.35; transform: scale(1.04); } }
+@media (prefers-reduced-motion: reduce) {
+  .hero-rise,
+  .hero-word,
+  .hero-scene { animation: none; }
+}
+
+/* ─── Concierge chat replies (Markdown) ─── */
+.concierge-md > * + * { margin-top: 0.6em; }
+.concierge-md ul,
+.concierge-md ol { padding-inline-start: 1.2em; }
+.concierge-md ul { list-style: disc; }
+.concierge-md ol { list-style: decimal; }
+.concierge-md li + li { margin-top: 0.25em; }
+.concierge-md li::marker { color: var(--color-gold); }
+.concierge-md strong { color: var(--color-ivory); font-weight: 600; }
