@@ -53,7 +53,7 @@ export default async function OurStoryPage({ params }: PageProps<"/[locale]/our-
             <Reveal className="lg:col-span-7">
               <figure className="relative">
                 <div className="rounded-sm border border-hairline bg-surface p-2.5 shadow-[0_30px_70px_-35px_rgba(28,21,16,0.55)]">
-                  <div className="relative aspect-[1032/677] overflow-hidden rounded-[2px]">
+                  <div className="relative aspect-[1013/660] overflow-hidden rounded-[2px]">
                     <Image src={inspiration.image} alt={`${inspiration.name} — ${inspiration.caption}`} fill loading="eager" fetchPriority="high" sizes="(min-width: 1024px) 56vw, 100vw" className="object-cover" />
                   </div>
                 </div>

@@ -49,7 +49,7 @@ export async function OurStory({ stats, inspiration }: { stats: StatsBlock | nul
           <Reveal delay={0.15} className="lg:col-span-6 lg:col-start-7">
             <figure className="relative">
               <div className="relative rounded-sm border border-gold/35 p-2 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.9)]">
-                <div className="relative aspect-[1032/677] overflow-hidden rounded-[2px]">
+                <div className="relative aspect-[1013/660] overflow-hidden rounded-[2px]">
                   <Image src={inspiration.image} alt={`${inspiration.name} — ${inspiration.caption}`} fill sizes="(min-width: 1024px) 46vw, 100vw" className="object-cover" />
                 </div>
               </div>

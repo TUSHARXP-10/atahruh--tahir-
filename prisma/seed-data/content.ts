@@ -271,7 +271,7 @@ export const CONTENT_BLOCKS = {
       name: "Yasinali Sayed",
       caption: "The inspiration behind Aayat al-Ruh",
       text: "Behind a perfume counter in Bombay, among decanters of oud, musk, amber and rose, Yasinali Sayed taught us that a fragrance is a memory you can wear — and that every guest deserves to be welcomed like family. Aayat al-Ruh carries that lesson into every bottle.",
-      image: "/images/brand/inspiration-yasinali-sayed.webp",
+      image: "/images/brand/inspiration-yasinali-sayed-v2.webp",
     },
     dataAr: {
       eyebrow: "مصدر إلهامنا",
